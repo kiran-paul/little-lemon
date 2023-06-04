@@ -1,47 +1,74 @@
-import {
-  Route, 
-  Routes
-} from 'react-router-dom';
-import pages from './utils/pages';
-import Layout from './components/layout/Layout';
-import Home from './components/pages/Home';
-import Bookings from './components/pages/Bookings';
-import ConfirmedBooking from './components/pages/Bookings/ConfirmedBooking';
-import NotFound from './components/pages/NotFound';
-import UnderConstruction from './components/pages/UnderConstruction';
+import "./App.css";
+import React from "react";
+// or import { Suspense } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Loading from "./pages/Loading";
+const LazySharedPage = React.lazy(() => import("./pages/SharedPage"));
+const LazyHome = React.lazy(() => import("./pages/Home"));
+const LazyAbout = React.lazy(() => import("./pages/About"));
+const LazyMenu = React.lazy(() => import("./pages/Menu"));
+const LazyReserve = React.lazy(() => import("./pages/Reserve"));
+const LazyError = React.lazy(() => import("./pages/Error"));
 
-const App = () => {
+function App() {
   return (
     <>
-      <Layout>
+      <BrowserRouter>
         <Routes>
-          <Route path={pages.get('home').path} element={<Home />} />
-          <Route 
-            path={pages.get('about').path} 
-            element={<UnderConstruction />} 
-          />
-          <Route 
-            path={pages.get('menu').path} 
-            element={<UnderConstruction />} 
-          />
-          <Route path={pages.get('bookings').path} element={<Bookings />} />
-          <Route 
-            path={pages.get('confirmedBooking').path} 
-            element={<ConfirmedBooking />} 
-          />
-          <Route 
-            path={pages.get('orderOnline').path} 
-            element={<UnderConstruction />} 
-          />
-          <Route 
-            path={pages.get('login').path} 
-            element={<UnderConstruction />} 
-          />
-          <Route path="*" element={<NotFound />} />
+          <Route
+            path="/"
+            element={
+              <React.Suspense fallback={<Loading />}>
+                <LazySharedPage />
+              </React.Suspense>
+            }
+          >
+            {/* the index will always match the path="/" */}
+            <Route
+              index
+              element={
+                <React.Suspense fallback={<Loading />}>
+                  <LazyHome />
+                </React.Suspense>
+              }
+            />
+            <Route
+              path="about"
+              element={
+                <React.Suspense fallback={<Loading />}>
+                  <LazyAbout />
+                </React.Suspense>
+              }
+            />
+            <Route
+              path="menu"
+              element={
+                <React.Suspense fallback={<Loading />}>
+                  <LazyMenu />
+                </React.Suspense>
+              }
+            />
+            <Route
+              path="reserve"
+              element={
+                <React.Suspense fallback={<Loading />}>
+                  <LazyReserve />
+                </React.Suspense>
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <React.Suspense fallback={<Loading />}>
+                  <LazyError />
+                </React.Suspense>
+              }
+            />
+          </Route>
         </Routes>
-      </Layout>
+      </BrowserRouter>
     </>
   );
-};
+}
 
 export default App;
